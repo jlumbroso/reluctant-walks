@@ -1,3 +1,13 @@
+# Get from site
+# https://www.lri.fr/genrgens/
+
+GenRGenS2.1-bin.jar
+
+
+
+# Temporary files
+*~
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -5,6 +15,9 @@ __pycache__/
 
 # C extensions
 *.so
+
+# macOS metadata
+.DS_Store
 
 # Distribution / packaging
 .Python

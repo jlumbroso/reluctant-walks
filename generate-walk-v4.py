@@ -403,11 +403,17 @@ class MapleWalkCompiler(WalkCompiler):
   def __init__(self, stepset):
     self.__stepset = stepset
     self.__equations = ""
+    self.__equations_list = []
     self.__walks = []
   
   @property
   def walks(self):
     return self.__walks
+  
+  @property
+  def equations(self):
+    return self.__equations_list
+
   
   def generate(self, times, size):
     self.call_script(times, size)
@@ -513,7 +519,8 @@ quit():""" % (self.__equations, times, size)
                      li_equations +
                      rj_equations +
                      unit_equations)
-    
+
+    self.__equations_list = all_equations
     self.__equations = "Sys:={%s}" % (", ".join(all_equations))
     return self.__equations
 
