@@ -1,17 +1,19 @@
 # @Date: 2018-03-21-20:33
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: genrgens.py
-# @Last modified time: 2018-03-22-10:48
+# @Last modified time: 2018-03-22-13:24
 
+import os as _os
 try:
     # Python 3
     from functools import reduce
 except ImportError:
     pass
-#from . import _package_ensure
-#from . import WalkCompiler
+
 from reluctant_walks.compilers import _package_info, _package_ensure
 from reluctant_walks.compilers import WalkCompiler
+
+from reluctant_walks.config import package_raise as _package_raise
 
 # ==============================================================================
 
@@ -37,12 +39,20 @@ class GenRGenSWalkCompiler(WalkCompiler):
         return self.__walks
 
     def generate(self, times, size):
+        # Call GenRGenS and capture stdout
         self.call_script(times, size)
+
+        # Parse the output and create the actual walks
         string_walks = self.__latest_output.strip().split('\n')
+
         walks = []
         for sw in string_walks:
-            walks += [ map(lambda n: self.__stepset.get(n), sw.split(' ')) ]
-        self.__walks += walks
+            string_steps = sw.split(' ')
+            walks.append(list(map(
+                lambda n: self.__stepset.get(n), string_steps)))
+
+        self.__walks.append(walks)
+
         return walks
 
     def call_script(self, times, size):
@@ -53,10 +63,9 @@ class GenRGenSWalkCompiler(WalkCompiler):
         from tempfile import NamedTemporaryFile
         self.compile(times, size)
         try:
-            script_file = open("/tmp/aa", "w") #NamedTemporaryFile()
+            script_file = NamedTemporaryFile()
             script_file.write(self.__script)
             script_file.flush()
-            print(script_file.name)
             self.__latest_output = self.run_genrgens(times, size, script_file.name)
             script_file.close()
         except KeyboardInterrupt:
@@ -70,14 +79,21 @@ class GenRGenSWalkCompiler(WalkCompiler):
         _package_ensure('genrgens')
         _package_ensure('java')
 
+        PATH_TO_GENRGENS = _package_info('genrgens').get('path', '')
+
+        if not _os.path.exists(PATH_TO_GENRGENS):
+            _package_raise('genrgens')
+
         # FIXME: ensure this is Python 2/3 compatible.
         from subprocess import Popen, PIPE
-        output = Popen(["java", "-cp",
-                        PATH_TO_GENRGENS,
-                        "GenRGenS.GenRGenS",
-                        "-nb", str(times),
-                        "-size", str(size),
-                        filename ],
+        genrgens_cmdline = [ "java", "-cp",
+                             PATH_TO_GENRGENS,
+                             "GenRGenS.GenRGenS",
+                             "-nb", str(times),
+                             "-size", str(size),
+                             filename ]
+
+        output = Popen(genrgens_cmdline,
                        stdout=PIPE,
                        stderr=open("/dev/null", "w")).communicate()[0]
 

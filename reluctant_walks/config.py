@@ -1,7 +1,7 @@
 # @Date:   2018-03-21-18:28
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: config.py
-# @Last modified time: 2018-03-22-10:47
+# @Last modified time: 2018-03-22-13:09
 
 import os as _os
 import platform as _platform
@@ -95,6 +95,10 @@ def detect_env():
                 java_info['available'] = True
                 java_info['path'] = _subprocess.check_output(
                     "which java", shell=True)
+
+                # Remove whitespace if any
+                if java_info['path'] != None:
+                    java_info['path'] = java_info['path'].strip()
             else:
                 java_info['available'] = False
 
