@@ -1,7 +1,7 @@
 # @Date: 2018-03-21-20:43
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: maple.py
-# @Last modified time: 2018-03-21-22:50
+# @Last modified time: 2018-03-21-23:15
 
 #from . import _package_ensure, _package_info
 #from . import CombstructWalkCompiler
@@ -68,11 +68,13 @@ class MapleWalkCompiler(CombstructWalkCompiler):
             script_file = NamedTemporaryFile()
             script_file.write(self.__script)
             script_file.flush()
-            self.__latest_output = self.run_maple(times, size, script_file.name)
+            self.__latest_output = self._run_maple(times, size, script_file.name)
             script_file.close()
         except KeyboardInterrupt:
             raise
-        except:
+        except Exception as e:
+            print("There was an exception:")
+            print(e)
             self.__latest_output = ""
         return self.__latest_output
 
@@ -82,7 +84,7 @@ class MapleWalkCompiler(CombstructWalkCompiler):
         """
         # NOTE: requires the GenRGenS binary be installed.
         _package_ensure('maple')
-        PATH_TO_MAPLE = package_info('maple').get('path', '')
+        PATH_TO_MAPLE = _package_info('maple').get('path', '')
 
         # FIXME: check Python 2/3 compatibility
         from subprocess import Popen, PIPE

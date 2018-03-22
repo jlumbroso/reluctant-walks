@@ -1,7 +1,7 @@
 # @Date: 2018-03-21-20:33
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: genrgens.py
-# @Last modified time: 2018-03-21-22:27
+# @Last modified time: 2018-03-21-23:47
 
 try:
     # Python 3
@@ -47,15 +47,16 @@ class GenRGenSWalkCompiler(WalkCompiler):
 
     def call_script(self, times, size):
         # NOTE: requires the GenRGenS binary be installed.
-        _ensure_package('genrgens')
+        _package_ensure('genrgens')
 
         #
         from tempfile import NamedTemporaryFile
         self.compile(times, size)
         try:
-            script_file = NamedTemporaryFile()
+            script_file = open("/tmp/aa", "w") #NamedTemporaryFile()
             script_file.write(self.__script)
             script_file.flush()
+            print(script_file.name)
             self.__latest_output = self.run_genrgens(times, size, script_file.name)
             script_file.close()
         except KeyboardInterrupt:
@@ -66,7 +67,7 @@ class GenRGenSWalkCompiler(WalkCompiler):
 
     def run_genrgens(self, times, size, filename):
         # NOTE: requires GenRGenS binary be installed.
-        _ensure_package('genrgens')
+        _package_ensure('genrgens')
 
         # FIXME: ensure this is Python 2/3 compatible.
         from subprocess import Popen, PIPE

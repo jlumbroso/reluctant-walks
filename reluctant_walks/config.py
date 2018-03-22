@@ -1,14 +1,17 @@
 # @Date:   2018-03-21-18:28
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: config.py
-# @Last modified time: 2018-03-21-22:18
+# @Last modified time: 2018-03-21-23:44
 
 import os as _os
 
 # ==============================================================================
 
+_MAKE_ABS = True
+
 _ENV_MAPLE_PATH='MAPLE_PATH'
 _ENV_BOLTZ_PATH='BOLTZOC_PATH'
+_ENV_GENRGENS_PATH='GENRGENS_PATH'
 
 _BIN_MAPLE_DEFAULT = "/Library/Frameworks/Maple.framework/Versions/{}/bin/maple"
 
@@ -27,6 +30,7 @@ def detect_env():
 
     sage_info = {}
     maple_info = {}
+    genrgens_info = {}
 
     # Detect if sage is available or not
     sage_info['available'] = False
@@ -61,9 +65,9 @@ def detect_env():
     maple_info['available'] = has_which and (
         _os.system("which maple 1> /dev/null 2> /dev/null") == 0)
 
-    if not maple_info['available'] and _os.environ.get('MAPLE_PATH', '') != '':
+    if not maple_info['available'] and _os.environ.get(_ENV_MAPLE_PATH, '') != '':
         # Check environment variable
-        maple_path = _os.environ.get('MAPLE_PATH', '')
+        maple_path = _os.environ.get(_ENV_MAPLE_PATH, '')
 
         if file.exists(maple_path):
             maple_info['available'] = True
@@ -91,12 +95,42 @@ def detect_env():
             maple_info['available'] = True
             maple_info['path'] = _BIN_MAPLE_DEFAULT.format(selected_version_name)
 
-    # Detect availability of Darrasse's C Boltzmann sampler
+    # Detect GenRGenS' availability
+    genrgens_info['available'] = False
+    import reluctant_walks as _rw
 
+    # Look for the .jar file
+    _opa = lambda s: s
+    if _MAKE_ABS:
+        _opa = _os.path.abspath
+
+    files_a = _os.listdir(_os.path.join(_rw.__path__[0], "."))
+    files_b = _os.listdir(_os.path.join(_rw.__path__[0], ".."))
+    tmp_lambda = (lambda x: "GenRGenS" in x and "-bin.jar" in x)
+    files_a = list(filter(tmp_lambda, files_a))
+    files_b = list(filter(tmp_lambda, files_b))
+    if len(files_a) > 0:
+        genrgens_info['available'] = True
+        genrgens_info['path'] = _os.path.join(_opa(
+            _os.path.join(_rw.__path__[0], ".")), files_a[0])
+    if len(files_b) > 0:
+        genrgens_info['available'] = True
+        genrgens_info['path'] = _os.path.join(_opa(
+            _os.path.join(_rw.__path__[0], "..")), files_b[0])
+
+    if _os.environ.get(_ENV_GENRGENS_PATH, '') != '':
+        s = _os.environ.get(_ENV_GENRGENS_PATH)
+        if _os.path.exists(s) or genrgens_info.get('path', '') == '':
+            genrgens_info['available'] = True
+            genrgens_info['path'] = _opa(s)
+
+    # Detect availability of Darrasse's C Boltzmann sampler
+    # FIXME: implement this.
 
     # Assemble
     info['sage'] = sage_info
     info['maple'] = maple_info
+    info['genrgens'] = genrgens_info
 
     return info
 
