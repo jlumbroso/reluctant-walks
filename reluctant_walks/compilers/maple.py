@@ -1,7 +1,7 @@
 # @Date: 2018-03-21-20:43
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: maple.py
-# @Last modified time: 2018-03-21-22:12
+# @Last modified time: 2018-03-21-22:50
 
 #from . import _package_ensure, _package_info
 #from . import CombstructWalkCompiler
@@ -33,6 +33,12 @@ class MapleWalkCompiler(CombstructWalkCompiler):
         self.__equations = ""
         self.__equations_list = []
         self.__walks = []
+        try:
+            # Python 3
+            super().__init__(stepset=stepset)
+        except:
+            # Python 2
+            super(MapleWalkCompiler, self).__init__(stepset=stepset)
 
     @property
     def walks(self):
@@ -40,7 +46,7 @@ class MapleWalkCompiler(CombstructWalkCompiler):
 
     def generate(self, times, size):
         # NOTE: requires the Maple binary be installed.
-        _ensure_package('maple')
+        _package_ensure('maple')
 
         #
         self.call_script(times, size)
@@ -53,7 +59,7 @@ class MapleWalkCompiler(CombstructWalkCompiler):
 
     def call_script(self, times, size):
         # NOTE: requires the GenRGenS binary be installed.
-        _ensure_package('maple')
+        _package_ensure('maple')
 
         #
         from tempfile import NamedTemporaryFile
@@ -75,8 +81,8 @@ class MapleWalkCompiler(CombstructWalkCompiler):
         Calls the Maple binary on the filename and captures output.
         """
         # NOTE: requires the GenRGenS binary be installed.
-        _ensure_package('maple')
-        PATH_TO_MAPLE = _package_info('maple').get('path', '')
+        _package_ensure('maple')
+        PATH_TO_MAPLE = package_info('maple').get('path', '')
 
         # FIXME: check Python 2/3 compatibility
         from subprocess import Popen, PIPE
@@ -86,11 +92,26 @@ class MapleWalkCompiler(CombstructWalkCompiler):
 
         return output
 
+    def compile_equations(self):
+        try:
+            self.__equations_list = super().compile_equations()
+        except:
+            # Python 2
+            self.__equations_list = super(MapleWalkCompiler,
+                                          self).compile_equations()
+        self.__equations = ", \n".join(self.__equations)
+
     def compile(self, times, size):
         """
         """
         # Ensure equations are compiled
-        self.compile_equations()
+        try:
+            # Python 3
+            self.__equations = super().compile()
+        except:
+            # Python 2
+            self.__equations = super(MapleWalkCompiler,
+                                          self).compile()
 
         # FIXME: 'object_count' seems to not working?
         self.__script = _TEMPLATE_MAPLE_GRAMMAR.format(
