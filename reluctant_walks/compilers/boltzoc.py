@@ -1,10 +1,12 @@
 # @Date:     2018-03-21-20:54
 # @Email:    lumbroso@cs.princeton.edu
 # @Filename: boltzoc.py
-# @Last modified time: 2018-03-21-20:59
+# @Last modified time: 2018-03-21-22:09
 
-from . import _package_ensure, _package_info
-from . import WalkCompiler
+#from . import _package_ensure, _package_info
+#from . import WalkCompiler
+from reluctant_walks.compilers import _package_info, _package_ensure
+from reluctant_walks.compilers import WalkCompiler
 
 # ==============================================================================
 

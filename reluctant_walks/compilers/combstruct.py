@@ -1,10 +1,17 @@
 # @Date:   2018-03-21-20:32
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: combstruct.py
-# @Last modified time: 2018-03-21-21:24
+# @Last modified time: 2018-03-21-22:25
 
-from . import _package_ensure, _package_info
-from . import WalkCompiler
+try:
+    # Python 3
+    from functools import reduce
+except ImportError:
+    pass
+#from . import _package_ensure, _package_info
+#from . import WalkCompiler
+from reluctant_walks.compilers import _package_info, _package_ensure
+from reluctant_walks.compilers import WalkCompiler
 
 # ==============================================================================
 
@@ -67,12 +74,12 @@ class CombstructWalkCompiler(WalkCompiler):
         stepset = self.__stepset
 
         # do the atoms and epsilon
-        unit_equations = map(lambda s: "%s=Atom" % s.symbol, stepset) + \
-                                                 ["E=Epsilon"]
+        unit_equations = list(map(lambda s: "%s=Atom" % s.symbol, stepset)) + \
+                              ["E=Epsilon"]
 
         # D equation
         max_k = min(stepset.max_up, stepset.min_down)
-        zds = map(lambda s: "Prod(%s, DD)" % s.symbol, stepset.select(0))
+        zds = list(map(lambda s: "Prod(%s, DD)" % s.symbol, stepset.select(0)))
         lrs = [ "Prod(L%d, R%d)" % (k,k) for k in range(1, max_k + 1) ]
         d_equation = "DD=%s" % self.make_op("Union", ["E"] + zds + lrs)
 
@@ -85,7 +92,8 @@ class CombstructWalkCompiler(WalkCompiler):
         # Li equations
         li_equations = []
         for i in range(1, stepset.max_up + 1):
-            zdsi = map(lambda s: "Prod(%s, DD)" % s.symbol, stepset.select(i))
+            zdsi = list(map(lambda s: "Prod(%s, DD)" % s.symbol,
+                            stepset.select(i)))
             max_k = min(stepset.max_up, i + stepset.min_down)
             lrsi = [ "Prod(L%d, R%d)" % (k, k-i)
                              for k in range(i+1, max_k + 1) ]
@@ -96,7 +104,8 @@ class CombstructWalkCompiler(WalkCompiler):
         # Rj equations
         rj_equations = []
         for j in range(1, stepset.min_down + 1):
-            zdsj = map(lambda s: "Prod(%s, DD)" % s.symbol, stepset.select(-j))
+            zdsj = list(map(lambda s: "Prod(%s, DD)" % s.symbol,
+                            stepset.select(-j)))
             max_k = min(j + stepset.max_up, stepset.min_down)
             lrsj = [ "Prod(L%d, R%d)" % (k-j, k)
                              for k in range(j+1, max_k + 1) ]

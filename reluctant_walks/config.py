@@ -1,7 +1,7 @@
 # @Date:   2018-03-21-18:28
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: config.py
-# @Last modified time: 2018-03-21-21:23
+# @Last modified time: 2018-03-21-22:18
 
 import os as _os
 
@@ -75,7 +75,8 @@ def detect_env():
         import glob as _glob
 
         versions_path = _glob.glob(_BIN_MAPLE_DEFAULT.format("*"))
-        versions_name = map(lambda path: path.split('/')[-3], versions_path)
+        versions_name = list(map(
+            lambda path: path.split('/')[-3], versions_path))
 
         selected_version_name = None
         if len(versions_name) > 0:

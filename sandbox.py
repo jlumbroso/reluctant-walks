@@ -1,10 +1,14 @@
 # @Date:     2018-03-21-21:21
 # @Email:    lumbroso@cs.princeton.edu
 # @Filename: sandbox.py
-# @Last modified time: 2018-03-21-21:21
+# @Last modified time: 2018-03-21-22:27
 
 
-
+try:
+    # Python 3
+    from functools import reduce
+except ImportError:
+    pass
 
 ##############################
 ## 79 NON-TRIVIAL STEP SETS ##

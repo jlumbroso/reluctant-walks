@@ -1,10 +1,17 @@
 # @Date: 2018-03-21-20:33
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: genrgens.py
-# @Last modified time: 2018-03-21-20:53
+# @Last modified time: 2018-03-21-22:27
 
-from . import _package_ensure
-from . import WalkCompiler
+try:
+    # Python 3
+    from functools import reduce
+except ImportError:
+    pass
+#from . import _package_ensure
+#from . import WalkCompiler
+from reluctant_walks.compilers import _package_info, _package_ensure
+from reluctant_walks.compilers import WalkCompiler
 
 # ==============================================================================
 

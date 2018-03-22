@@ -1,11 +1,16 @@
 # @Date:   2018-03-21-19:49
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: plane.py
-# @Last modified time: 2018-03-21-21:25
+# @Last modified time: 2018-03-21-22:26
 
+try:
+    # Python 3
+    from functools import reduce
+except ImportError:
+    pass
 # Utility function to transform a float to a rationales
-from config import farey_rat_approx as _farey_rat_approx
-from config import package_ensure as _package_ensure
+from reluctant_walks.config import farey_rat_approx as _farey_rat_approx
+from reluctant_walks.config import package_ensure as _package_ensure
 
 class Step(object):
     __kind = 'plane'
@@ -162,7 +167,7 @@ class StepSet(object):
         x, y = var("x y", domain = "real")
         step_set = map(lambda ss: (ss.x, ss.y), self.__set)
         # p: inventory polynomial
-        p = sum(map(lambda (a,b):x**a*y**b, step_set))
+        p = sum(map(lambda q:x**q[0] * y**q[1], step_set))
         # solve diff(p, x) == 0 && diff(p, y) == 0
         solutions = maxima([diff(p, x) == 0, diff(p, y) == 0]).solve([x,y]).sage()
         #solutions = solve([diff(p, x) == 0, diff(p, y) == 0], x, y)

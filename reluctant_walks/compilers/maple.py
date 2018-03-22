@@ -1,10 +1,12 @@
 # @Date: 2018-03-21-20:43
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: maple.py
-# @Last modified time: 2018-03-21-21:07
+# @Last modified time: 2018-03-21-22:12
 
-from . import _package_ensure, _package_info
-from . import CombstructWalkCompiler
+#from . import _package_ensure, _package_info
+#from . import CombstructWalkCompiler
+from reluctant_walks.compilers import _package_info, _package_ensure
+from reluctant_walks.compilers.combstruct import CombstructWalkCompiler
 
 # ==============================================================================
 
