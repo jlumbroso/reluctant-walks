@@ -1,7 +1,7 @@
 # @Date: 2018-03-21-20:33
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: genrgens.py
-# @Last modified time: 2018-03-21-23:47
+# @Last modified time: 2018-03-22-10:48
 
 try:
     # Python 3
@@ -48,7 +48,7 @@ class GenRGenSWalkCompiler(WalkCompiler):
     def call_script(self, times, size):
         # NOTE: requires the GenRGenS binary be installed.
         _package_ensure('genrgens')
-
+        _package_ensure('java')
         #
         from tempfile import NamedTemporaryFile
         self.compile(times, size)
@@ -68,6 +68,7 @@ class GenRGenSWalkCompiler(WalkCompiler):
     def run_genrgens(self, times, size, filename):
         # NOTE: requires GenRGenS binary be installed.
         _package_ensure('genrgens')
+        _package_ensure('java')
 
         # FIXME: ensure this is Python 2/3 compatible.
         from subprocess import Popen, PIPE

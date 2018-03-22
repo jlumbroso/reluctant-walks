@@ -1,9 +1,11 @@
 # @Date:   2018-03-21-18:28
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: config.py
-# @Last modified time: 2018-03-21-23:44
+# @Last modified time: 2018-03-22-10:47
 
 import os as _os
+import platform as _platform
+import subprocess as _subprocess
 
 # ==============================================================================
 
@@ -30,6 +32,7 @@ def detect_env():
 
     sage_info = {}
     maple_info = {}
+    java_info = {}
     genrgens_info = {}
 
     # Detect if sage is available or not
@@ -60,6 +63,41 @@ def detect_env():
 
     # Detect availability of "which"
     has_which = (_os.system("which which 1> /dev/null 2> /dev/null") == 0)
+
+    # Detect availability of Java/JRE/JDK
+    java_info['available'] = False
+
+    if _platform.system() == 'Darwin':
+        # Mac OS X has this weird hack that running "java" or "javac"
+        # will produce a dialog even when they are not available.
+        # This block will catch the issue and prevent it from affecting
+        # the rest of the code.
+        #
+        # From: https://stackoverflow.com/a/31776543/408734
+
+        try:
+            out = _subprocess.check_output(
+                "/usr/libexec/java_home -V 2> /dev/stdout",
+                shell=True)
+        except _subprocess.CalledProcessError as e:
+            # If error code is 1 (or more) then no VM available
+            java_info['available'] = False
+            java_info['error'] = 5
+            java_info['message'] = e.output
+
+    if 'error' not in java_info:
+
+        if _os.environ.get('JAVA_HOME', "") != "":
+            java_info['available'] = True
+
+        if has_which:
+            if _os.system("which java 1> /dev/null 2> /dev/null") == 0:
+                java_info['available'] = True
+                java_info['path'] = _subprocess.check_output(
+                    "which java", shell=True)
+            else:
+                java_info['available'] = False
+
 
     # Detect availability of Maple
     maple_info['available'] = has_which and (
@@ -130,6 +168,7 @@ def detect_env():
     # Assemble
     info['sage'] = sage_info
     info['maple'] = maple_info
+    info['java'] = java_info
     info['genrgens'] = genrgens_info
 
     return info
