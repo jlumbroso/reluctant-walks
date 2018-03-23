@@ -1,7 +1,7 @@
 # @Date:   2018-03-21-19:49
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: plane.py
-# @Last modified time: 2018-03-23-13:37
+# @Last modified time: 2018-03-23-14:49
 
 try:
     # Python 3
@@ -166,6 +166,7 @@ class StepSet(object):
     def solve_inventory_equation(self):
         # NOTE: This computation currently requires Sage.
         _package_ensure("sage")
+        from sage.all import var, maxima, diff
 
         # ==================================================================
         # FIXME: document where this math comes from.
@@ -215,6 +216,7 @@ class StepSet(object):
         else:
             # NOTE: This computation currently requires Sage.
             _package_ensure("sage")
+            from sage.all import log, round, sqrt
 
             (alpha, beta) = map(lambda x: x.rhs(), solutions[0])
 

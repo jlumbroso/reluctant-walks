@@ -3,7 +3,7 @@
 # @Date:   2018-03-21-21:26
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: reference.py
-# @Last modified time: 2018-03-23-13:41
+# @Last modified time: 2018-03-23-14:51
 
 # ==============================================================================
 
@@ -142,7 +142,7 @@ __nt_stepsets_slope = {
     5: [0, 0, 0, 0, 0, 1, 0, (0, 1), 0, 0, 0, 0, 0, 0, 0, 0, (7, 8),
             (3, 2), (2, 1), (19, 7), (0, 1), 0, 0, 0, (1, 0), 0, (1, 0)],
     6: [0, 0, 0, 0, 0, 0, (1, 0), (31, 9), (7, 4), 0, (1, 0), (0, 1),
-            0, 0, 0, None],
+            0, 0, 0, 1], # FIXME: double check that 1
     7: [0, 1, 0, 0, (0, 1)],
     8: [0]
 }
@@ -203,6 +203,8 @@ def __build_nt_stepsets_records():
 
     return objs
 
-nt_stepsets_records = __build_nt_stepsets_records()
+__nt_stepsets_records = __build_nt_stepsets_records()
+
+# consts
 #def get_nontrivial_qw_model(by_drift=)
 # ==============================================================================
