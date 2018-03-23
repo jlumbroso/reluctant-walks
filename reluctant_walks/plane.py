@@ -1,7 +1,7 @@
 # @Date:   2018-03-21-19:49
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: plane.py
-# @Last modified time: 2018-03-21-22:26
+# @Last modified time: 2018-03-23-13:37
 
 try:
     # Python 3
@@ -39,7 +39,7 @@ class Step(object):
             self.__name, self.__x_delta, self.__y_delta)
 
     def __str__(self):
-        return "{}: \{{}{}, {}{}\} weight: {}".format(
+        return "{}: ({}{}, {}{}) weight: {}".format(
             self.__name,
             self.__sign(self.__x_delta),
             abs(self.__x_delta),
@@ -71,6 +71,8 @@ class Step(object):
     def y(self, value):
         self.__y_delta = value
 
+    # FIXME: determine if/where this is used (my hunch is that it is used
+    # nowhere); determine if this makes (mathematical) sense.
     @property
     def slope(self):
         return (self.__slope_p, self.__slope_q)
@@ -93,12 +95,17 @@ class Step(object):
 class StepSet(object):
     __kind = 'plane'
 
-    def __init__(self, init_set = [], slope_p = 0, slope_q = 1):
+    def __init__(self, init_set = [], slope_p = 0, slope_q = 1,
+                 cached_bestslope=None, cached_bestslope_ratprecision=10):
         self.__set = []
         self.__slope_p = slope_p
         self.__slope_q = slope_q
         for step in init_set:
             self.add(Step(step[0],step[1]))
+
+        # caching system for 'best slopes' (so this can be useful without Sage)
+        self.__cached_bestslope = cached_bestslope
+        self.__cached_bestslope_ratprecision = cached_bestslope_ratprecision
 
     def add(self, step):
         if not step.symbol in map(lambda s: s.symbol, self.__set):
@@ -190,9 +197,18 @@ class StepSet(object):
         # ==================================================================
         return (p, real_solutions)
 
-    def get_best_slope(self, rat_precision = 10):
+    def get_best_slope(self, rat_precision=10, force=False):
         if self.drift >= 0:
             return 0
+
+        # ======================================================
+        # FIXME: Lame caching (to allow for precomputed best
+        # slopes, so this can be useful without Sage)
+        if (not force and self.__cached_bestslope != None and
+            self.__cached_bestslope_ratprecision == rat_precision):
+            return self.__cached_bestslope
+        # ======================================================
+
         (p, solutions) = self.solve_inventory_equation()
         if len(solutions) == 0:
             return 0
