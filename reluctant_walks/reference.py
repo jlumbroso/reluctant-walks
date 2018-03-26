@@ -3,7 +3,7 @@
 # @Date:   2018-03-21-21:26
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: reference.py
-# @Last modified time: 2018-03-23-14:51
+# @Last modified time: 2018-03-25-23:57
 
 # ==============================================================================
 
@@ -206,5 +206,29 @@ def __build_nt_stepsets_records():
 __nt_stepsets_records = __build_nt_stepsets_records()
 
 # consts
-#def get_nontrivial_qw_model(by_drift=)
+POSSIBLE_NT_DRIFTS=set(map(lambda r: r['drift'], r.nt_stepsets_records))
+POSSIBLE_NT_SLOPES=set(filter(lambda x: x != None,
+                           map(lambda r: r['best_slope'],
+                               r.nt_stepsets_records)))
+POSSIBLE_NT_SIZES=set(map(lambda r: r['size'], r.nt_stepsets_records))
+
+def get_nontrivial_qw_model(by_drift=POSSIBLE_DRIFTS,
+                            by_best_slope=POSSIBLE_SLOPES,
+                            by_size=POSSIBLE_SIZES):
+    global __nt_stepsets_records
+
+    if not "__nt_stepsets_records" in globals():
+        __nt_stepsets_records = __build_nt_stepsets_records()
+
+    def filter_function(record):
+        if type(record) == dict:
+            fields = record.keys()
+            if "drift" in fields and not record['drift'] in by_drift:
+                return False
+            if "size" in fields and not record['size'] in by_size:
+                return False
+            if "best_slope" in fields and not record['best_slope'] in by_best_slope:
+                return False
+
+    return filter(lambda r: r[])
 # ==============================================================================
