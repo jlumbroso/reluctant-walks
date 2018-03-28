@@ -1,7 +1,7 @@
 # @Date: 2018-03-21-20:33
 # @Email: lumbroso@cs.princeton.edu
 # @Filename: genrgens.py
-# @Last modified time: 2018-03-22-13:24
+# @Last modified time: 2018-03-27-23:58
 
 import os as _os
 try:
@@ -162,3 +162,119 @@ class GenRGenSWalkCompiler(WalkCompiler):
 
         self.__equations = " ;\n".join(all_equations) + ";"
         return self.__equations
+
+
+
+# ==============================================================================
+# This is some legacy code that compiles the equation using a more Pythonic
+# structure than the string implementation above.
+#
+# NOTE: Not clear this is functional, or efficient.
+# NOTE: This is probably supplemented by the work done by combstruct2json.
+# FIXME: Determine if this is efficient and possibly refactor with above
+#        implementation
+# ==============================================================================
+
+TERM_NEUTRAL=     "TERM_NEUTRAL"#1
+TERM_ATOM=        "TERM_ATOM" #2
+EPSILON=          "EPSILON" #16
+PRODUCT=          "PROD" #4
+UNION=            "UNION" #8
+SYMBOL=           "SYMBOL" #32
+
+def make_union(lst):
+    if len(lst) == 0:
+        return []
+    return [UNION] + lst
+
+def build_system(stepset):
+    system = {}
+
+    # Z(i)s
+    for step in stepset:
+        system[step.symbol] = [TERM_ATOM]
+
+    max_k = min(stepset.max_up, stepset.min_down)
+
+    # DD -> d_eqs
+    d_eq = [ UNION ]
+    d_eq += [ [ EPSILON ] ]
+    d_eq += map(lambda s: [PRODUCT, s.symbol, "DD"], stepset.select(0))
+    d_eq += [ [PRODUCT, "L%d"%k, "R%d"%k] for k in range(1, max_k + 1) ]
+    system["DD"] = d_eq
+
+    # PP ->
+    p_eq = [ UNION ]
+    p_eq += [ [ EPSILON ] ]
+    p_eq += map(lambda s: [PRODUCT, s.symbol, "PP"], stepset.select(0))
+    p_eq += [ [PRODUCT, "L%d"%k, "PP"] for k in range(1, stepset.max_up + 1) ]
+    system["PP"] = p_eq
+
+    # Li = Z(i)s D + { Lk R(k-i), k = i+1..a }
+    for i in range(1, stepset.max_up + 1):
+        li_eq = []
+        li_eq += map(lambda s: [PRODUCT, s.symbol, "DD" ], stepset.select(i))
+
+        max_k = min(stepset.max_up, i + stepset.min_down)
+        li_eq +=    [ [ PRODUCT, "L%d"%k, "R%d"%(k-i) ]
+                                for k in range(i+1, max_k+1) ]
+        if len(li_eq) > 0:
+            system["L%d"%i] = make_union(li_eq)
+
+    # Rj
+    for j in range(1, stepset.min_down + 1):
+        rj_eq = []
+        rj_eq += map(lambda s: [PRODUCT, s.symbol, "DD" ], stepset.select(-j))
+        max_k = min(j+stepset.max_up, stepset.min_down)
+        rj_eq += [ [ PRODUCT, "L%d"%(k-j), "R%d"%k ]
+                             for k in range(j+1, max_k+1) ]
+        if len(rj_eq) > 0:
+            system["R%d"%j] = make_union(rj_eq)
+
+    return system
+
+def using_symbols(rule):
+    import operator
+    if rule[0] == TERM_ATOM:
+        return []
+    elif rule[0] == PRODUCT:
+        return reduce(operator.add, map(using_symbols, rule[1:]), [])
+    elif rule[0] == EPSILON:
+        return []
+    elif rule[0] == UNION:
+        return reduce(operator.add, map(using_symbols, rule[1:]), [])
+    else:
+        return [rule]
+
+def clean_system(system):
+    for symbol in system:
+        pass
+
+import itertools
+
+def rule_genr(rule):
+    if rule[0] == TERM_ATOM:
+        return None
+    elif rule[0] == PRODUCT:
+        return " ".join(map(rule_genr, rule[1:]))
+    elif rule[0] == EPSILON:
+        return ""
+    elif rule[0] == UNION:
+        return map(rule_genr, rule[1:])
+    else:
+        return rule
+
+def sys_genrs(system):
+    rules = []
+    for symbol in system:
+        rule = rule_genr(system[symbol])
+        if rule == None:
+            continue
+        elif type(rule) == list:
+            rules += map(lambda x: "%s -> %s" % (symbol, x), rule)
+        elif type(rule) == str:
+            rules += [ "%s -> %s" % (symbol, rule) ]
+        else:
+            print rule
+    # Assembly
+    return ";\n".join(rules)
