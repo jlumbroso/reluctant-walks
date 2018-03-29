@@ -4,19 +4,19 @@
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: setup.py
 # @Last modified by:   jlumbroso
-# @Last modified time: 2018-03-29-19:00
+# @Last modified time: 2018-03-29-19:06
 
 from setuptools import setup, find_packages
 
 setup(
 	name = "reluctant_walks",
 	packages = find_packages(),
-	version = "1.0",
+	version = "1.1",
 	description = ("Python/Sage package to study and sample reluctant "
                    "random walks in the positive quadrant."),
 	author = "Jérémie Lumbroso",
 	author_email = "lumbroso@cs.princeton.edu",
-	url = "https://github.com/jlumbroso/reluctant_walks",
+	url = "https://github.com/jlumbroso/reluctant-walks",
 	keywords = ['combinatorics', 'random walks', 'sampling'],
 	license = 'LGPLv3',
 	classifiers = [
