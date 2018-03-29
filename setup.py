@@ -4,13 +4,13 @@
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: setup.py
 # @Last modified by:   jlumbroso
-# @Last modified time: 2018-03-29-18:54
+# @Last modified time: 2018-03-29-19:00
 
-from setuptools import _setup, _find_packages
+from setuptools import setup, find_packages
 
-_setup(
+setup(
 	name = "reluctant_walks",
-	packages = _find_packages(),
+	packages = find_packages(),
 	version = "1.0",
 	description = ("Python/Sage package to study and sample reluctant "
                    "random walks in the positive quadrant."),
