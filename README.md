@@ -1,4 +1,4 @@
-# reluctant-walks
+# Sampling quarter-plane walks, from stepsets with a negative drift
 
 Reluctant walks tend to exit the quarter-plane in which they are constrained, but this work shows how to randomly sample large reluctant walks anyway!
 
