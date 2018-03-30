@@ -3,7 +3,7 @@
 # @Date:   2018-03-21-21:26
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: reference.py
-# @Last modified time: 2018-03-28-01:01
+# @Last modified time: 2018-03-29-19:39
 
 import copy as _copy
 
@@ -225,10 +225,12 @@ POSSIBLE_NT_SLOPES=set(filter(lambda x: x != None,
                            map(lambda r: r['best_slope'],
                                __nt_stepsets_records)))
 POSSIBLE_NT_SIZES=set(map(lambda r: r['size'], __nt_stepsets_records))
+POSSIBLE_NT_IDS=set(range(len(__nt_stepsets_records)))
 
 def get_nontrivial_qw_model(by_drift=POSSIBLE_NT_DRIFTS,
                             by_best_slope=POSSIBLE_NT_SLOPES,
-                            by_size=POSSIBLE_NT_SIZES):
+                            by_size=POSSIBLE_NT_SIZES,
+                            by_id=POSSIBLE_NT_IDS):
 
     global __nt_stepsets_records
 
@@ -244,6 +246,8 @@ def get_nontrivial_qw_model(by_drift=POSSIBLE_NT_DRIFTS,
         if "size" in fields and not record['size'] in by_size:
             return False
         if "best_slope" in fields and not record['best_slope'] in by_best_slope:
+            return False
+        if "id" in fields and by_id != None and not record["id"] in by_id:
             return False
         # If we made it this far...
         return True
