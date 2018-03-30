@@ -1,7 +1,7 @@
 # @Date:   2018-03-21-19:49
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: plane.py
-# @Last modified time: 2018-03-23-14:49
+# @Last modified time: 2018-03-29-22:51
 
 try:
     # Python 3
@@ -11,6 +11,7 @@ except ImportError:
 # Utility function to transform a float to a rationales
 from reluctant_walks.config import farey_rat_approx as _farey_rat_approx
 from reluctant_walks.config import package_ensure as _package_ensure
+import reluctant_walks.graphics as _graphics
 
 class Step(object):
     __kind = 'plane'
@@ -137,6 +138,10 @@ class StepSet(object):
         for step in self:
             s += "    {}\n".format(step.__str__())
         return s
+
+    @property
+    def figure(self):
+        return _graphics.plot_stepset(self.__set)
 
     @property
     def max_up(self):

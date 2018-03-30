@@ -3,13 +3,12 @@
 # @Email:  lumbroso@cs.princeton.edu
 # @Filename: graphics.py
 # @Last modified by:   jlumbroso
-# @Last modified time: 2018-03-29-20:48
+# @Last modified time: 2018-03-29-23:22
 
-import matplotlib as _plt
+import matplotlib.pyplot as _plt
 #from matplotlib.lines import Line2D as _Lines2D
 
-def plot_walk(walk, color='red', alpha=0.04):
-    # FIXME: make this function take and return an axis
+def plot_walk(walk, color='red', alpha=0.04, ax=None, figsize=None, dpi=None):
     Xcur = 0
     Ycur = 0
     Xvec = []
@@ -25,7 +24,39 @@ def plot_walk(walk, color='red', alpha=0.04):
     Xvec.reverse()
     Yvec.reverse()
     #line = Line2D(Xvec,Yvec)
-    return _plt.plot(Xvec, Yvec, color=color, alpha=alpha)
+    if ax == None:
+        if figsize == None and dpi == None:
+            fig = _plt.figure()
+        elif figsize != None:
+            fig = _plt.figure(figsize=figsize)
+        elif dpi != None:
+            fig = _plt.figure(dpi=dpi)
+        else:
+            fig = _plt.figure(figsize=figsize, dpi=dpi)
+
+        ax = fig.add_axes([0,0,1,1])
+    
+    ax.plot(Xvec, Yvec, color=color, alpha=alpha)
+
+    return ax
+
+def plot_walk_region(walks, ax=None, figsize=None, **args):
+
+    unrestricted_walks = walks
+    restricted_walks = filter(is_quarter_plane, unrestricted_walks)
+
+    for walk in unrestricted_walks:
+        ax = plot_walk(walk, color='grey', alpha=0.04,
+                       ax=ax, figsize=figsize, **args)
+
+    for walk in restricted_walks:
+        ax = plot_walk(walk, color='green', alpha=0.8,
+                       ax=ax, figsize=figsize, **args)
+
+    ax.axhline(0, color='black')
+    ax.axvline(0, color='black')
+
+    return ax
 
 def plot_stepset(stepset, color='red', alpha=1.0, dpi=80, ax=None):
     Xvec = []
@@ -42,7 +73,7 @@ def plot_stepset(stepset, color='red', alpha=1.0, dpi=80, ax=None):
     Yvec.reverse()
 
     if ax == None:
-        fig = plt.figure(figsize=(1, 1), dpi=dpi)
+        fig = _plt.figure(figsize=(1, 1), dpi=dpi)
         ax = fig.add_axes([0,0,1,1])
 
     ax.grid(True)
@@ -53,7 +84,7 @@ def plot_stepset(stepset, color='red', alpha=1.0, dpi=80, ax=None):
 
     return ax
 
-def plot_stepsets(stepsets, side=None, **args):
+def plot_stepsets(stepsets, side=None, dpi=80, **args):
     import math
 
     if side == None:
@@ -62,13 +93,14 @@ def plot_stepsets(stepsets, side=None, **args):
     N=side
     M=int(math.ceil(len(stepsets)/float(N)))
 
-    fig, ax = plt.subplots(M, N, dpi=40)
+    fig, ax = _plt.subplots(M, N, dpi=dpi)
 
     for i in range(len(stepsets)):
         x = i % N
         y = (i - x) / N
         plot_stepset(stepset=stepsets[i],
                      ax=ax[y][x],
+                     dpi=dpi,
                      **args)
 
     for i in range(len(stepsets),N*M):
