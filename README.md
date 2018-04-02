@@ -2,6 +2,10 @@
 
 Reluctant walks tend to exit the quarter-plane in which they are constrained, but this work shows how to randomly sample large reluctant walks anyway.
 
+## Example
+
+![Plot of a constrained walk in green, on a backdrop of unconstrained walks.](examples/images/example.png?raw=true "Plot of a constrained walk in green, on a backdrop of unconstrained walks.")
+
 ## Installation
 
 Since the package is registered in Python's central repository, you can install it using `pip`:
