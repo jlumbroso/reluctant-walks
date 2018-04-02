@@ -2,10 +2,6 @@
 
 Reluctant walks tend to exit the quarter-plane in which they are constrained, but this work shows how to randomly sample large reluctant walks anyway.
 
-## Example
-
-![Plot of a constrained walk in green, on a backdrop of unconstrained walks.](examples/images/example.png?raw=true "Plot of a constrained walk in green, on a backdrop of unconstrained walks.")
-
 ## Installation
 
 Since the package is registered in Python's central repository, you can install it using `pip`:
@@ -21,6 +17,12 @@ Although the package will degrade gracefully, it has some dependencies for certa
 - Either [GenRGenS](https://www.lri.fr/genrgens/index.php?idpage=2) or [Maple](https://www.maplesoft.com/) as a backend to randomly sample walks given an algebraic grammar, if you wish to be able to randomly generate walks.
 
 In addition, it is recommended to have `matplotlib` to visualize the walks, and Jupyter Notebook to experiment with the package. See the `notebook` folder for examples.
+
+## Example
+
+Below is a single walk of size 2000 in green, on a backdrop of many other walks that were also sampled, but which do not remain in the upper-right quarter-plane. There are further such examples in the [VisualizingWalks.ipynb](notebook/VisualizingWalks.ipynb) notebook.
+
+![Plot of a constrained walk in green, on a backdrop of unconstrained walks.](examples/images/example.png?raw=true "Plot of a constrained walk in green, on a backdrop of unconstrained walks.")
 
 ## Bibliography
 
