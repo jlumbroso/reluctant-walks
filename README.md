@@ -20,7 +20,7 @@ In addition, it is recommended to have `matplotlib` to visualize the walks, and 
 
 ## Example
 
-Below is a single walk of size 2000 in green, on a backdrop of many other walks that were also sampled, but which do not remain in the upper-right quarter-plane. There are further such examples in the [VisualizingWalks.ipynb](notebook/VisualizingWalks.ipynb) notebook.
+Below is a single walk of size 2000 in green, on a backdrop of many other walks that were also sampled, but which do not remain in the upper-right quarter-plane. There are further such examples in the [VisualizingWalks.ipynb](examples/notebooks/VisualizingWalks.ipynb) notebook.
 
 ![Plot of a constrained walk in green, on a backdrop of unconstrained walks.](examples/images/example.png?raw=true "Plot of a constrained walk in green, on a backdrop of unconstrained walks.")
 
